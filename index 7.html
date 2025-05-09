@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive English Lesson</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+
+        /* Story/Paragraph Section */
+        .story-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        /* Enhanced story-text for better readability */
+        .story-text {
+            font-size: 18px;
+            text-align: justify;
+            line-height: 1.8;
+            white-space: pre-line; /* Allows both paragraph and conversation styles */
+            text-indent: 30px;
+        }
+
+        /* Emoji Animations */
+        .walking-elephant {
+            font-size: 30px;
+            position: absolute;
+            top: 10px;
+            left: -50px;
+            animation: walkAcross 15s linear infinite;
+        }
+
+        .flying-butterfly {
+            font-size: 25px;
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            animation: flyAround 12s ease-in-out infinite;
+        }
+
+        @keyframes walkAcross {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(850px); }
+        }
+
+        @keyframes flyAround {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            font-weight: bold;
+            cursor: help;
+            transition: all 0.3s ease;
+            color: #2980b9;
+        }
+
+        .tooltip:hover {
+            color: #e74c3c;
+            transform: scale(1.1);
+            text-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .ipa {
+            font-weight: bold;
+            color: #f1c40f;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Difficult Words Section */
+        .difficult-words {
+            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .word-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .word-item {
+            background-color: #fff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: help;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            margin: 8px;
+            border: 2px solid transparent;
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .word-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+            background-size: 400% 400%;
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .word-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            color: #fff;
+        }
+
+        .word-item:hover::before {
+            opacity: 1;
+            animation: gradientGlow 3s ease infinite;
+        }
+
+        @keyframes gradientGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .word-item:active {
+            transform: scale(0.95);
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Listening Options Section */
+        .listening-section {
+            background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .audio-player {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+        }
+
+        .audio-title {
+            color: #5d4037;
+            margin-bottom: 15px;
+        }
+
+        /* Practice Section */
+        .practice-words {
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .practice-list {
+            list-style-type: none;
+            padding: 0;
+            columns: 2;
+        }
+
+        .practice-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .practice-list li::before {
+            content: "•";
+            color: #2e7d32;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .practice-list {
+                columns: 1;
+            }
+            
+            .word-list {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .word-item {
+                padding: 10px 15px;
+                min-width: 100px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Story/Paragraph Section -->
+    <div class="story-container">
+        <div class="walking-elephant">🏃🏃‍♀️</div>
+        <div class="flying-butterfly">🤸‍♀️</div>
+       <h1 class="lesson-title">Daily Activities</h1>
+<p class="story-text" id="lesson-paragraph">
+    <strong>Aliza:</strong> Hi, John and Andrea! What do you usually do in the morning?<br><br>
+    <strong>John:</strong> I wake up at seven o’clock. Then, I brush my teeth and take a shower. What about you, Andrea?<br><br>
+    <strong>Andrea:</strong> I wake up at six thirty. After that, I do some light stretching and prepare breakfast for my family. What about you, Aliza?<br><br>
+    <strong>Aliza:</strong> I wake up at six. After breakfast, I go for a short walk. Do you guys exercise in the morning?<br><br>
+    <strong>John:</strong> No, I don’t. But I want to start. What kind of exercise do you do, Aliza?<br><br>
+    <strong>Aliza:</strong> Just walking and sometimes yoga. How about you, Andrea? Do you exercise?<br><br>
+    <strong>Andrea:</strong> Yes, I do. I jog in the park for about twenty minutes. It helps me feel awake and ready for the day.<br><br>
+    <strong>John:</strong> That’s impressive! What do you do after jogging?<br><br>
+    <strong>Andrea:</strong> After jogging, I take a shower and prepare for work. What do you do after your walk, Aliza?<br><br>
+    <strong>Aliza:</strong> I read the news or check my emails. Then, I get dressed for work.<br><br>
+    <strong>John:</strong> I usually prepare my lunch before I leave for work. What time do you both start work?<br><br>
+    <strong>Andrea:</strong> I start at nine o’clock. What about you?<br><br>
+    <strong>Aliza:</strong> I also start at nine. And you, John?<br><br>
+    <strong>John:</strong> I start at eight thirty. It’s a bit early, but I like it because I finish earlier in the afternoon.<br><br>
+    <strong>Andrea:</strong> That’s good! Do you have lunch at work or bring it from home?<br><br>
+    <strong>Aliza:</strong> I usually eat at the office cafeteria. It’s convenient.<br><br>
+    <strong>John:</strong> I bring lunch from home. It’s healthier and saves money. What about you, Andrea?<br><br>
+    <strong>Andrea:</strong> I do both. Sometimes I bring lunch, and sometimes I eat out with my coworkers.<br><br>
+  </p>
+
+  <p>
+    <strong>Sarah:</strong> Hi, Ben and Lily! What are we shopping for today?<br><br>
+    <strong>Ben:</strong> I need to buy a new backpack. Mine is too old, and the straps are broken.<br><br>
+    <strong>Lily:</strong> Oh no, Ben! You really need a new one. What color are you thinking about?<br><br>
+    <strong>Ben:</strong> Hmm, maybe black or blue. Something simple.<br><br>
+    <strong>Sarah:</strong> Black is a good choice! It matches everything.<br><br>
+    <strong>Lily:</strong> True, but blue is nice, too. It’s more cheerful. What about you, Sarah? Looking for anything?<br><br>
+    <strong>Sarah:</strong> Maybe a dress or some accessories. I saw a store with a big sale earlier.<br><br>
+    <strong>Lily:</strong> That sounds fun! I need to check out the shoes. There’s a fifty-percent discount in that shop over there.<br><br>
+    <strong>Ben:</strong> Wow, a discount? Let’s go! But first, I’m so thirsty. Can we grab a drink at the café?<br><br>
+    <strong>Sarah:</strong> Sure, we can sit down for a bit and plan where to shop next.<br><br>
+    <strong>Lily:</strong> Perfect. The café on the second floor has great smoothies.<br><br>
+    <strong>Ben:</strong> Smoothies sound great! Then we can head to the shoe store and find your backpack, Lily’s shoes, and Sarah’s dress.<br><br>
+    <strong>Sarah:</strong> Sounds like a plan! Let’s go before it gets crowded.<br><br>
+  </p>
+</div>
+
+    <!-- Listening Options Section -->
+    <div class="listening-section">
+        <h2 class="audio-title">Listen to the Story</h2>
+        <div class="audio-player">
+            <audio id="audio-player" controls preload="none">
+                Your browser does not support the audio element.
+            </audio>
+            <div style="margin-top: 10px; font-style: italic; color: #5d4037;">
+                Narrated by Yon Daravuth
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace this link with any original Dropbox link you copy
+        const originalDropboxLink = "https://www.dropbox.com/scl/fi/5a8dy4mzdznz0btpqfdpp/Yon-Daravuth-Daily-Activities-Conversation-Practice.m4a?rlkey=6hsejsbunnqv9w0bi3ldao2gr&st=heeyw21o&dl=0";
+
+        // Convert to streamable format
+        const streamableLink = originalDropboxLink.replace("dl=0", "raw=1");
+
+        // Set to audio player
+        document.getElementById("audio-player").src = streamableLink;
+    </script>
+
+    <!-- Difficult Words Section -->
+<div class="difficult-words">
+    <h2>Difficult Words</h2>
+    <div class="word-list" id="difficult-words-list">
+                <div class="word-item" data-word="stretching" data-ipa="/ˈstrɛtʃɪŋ/" data-definition="The act of extending your body or limbs to make them more flexible or to warm up.">
+            stretching
+            <span class="tooltiptext"><span class="ipa">/ˈstrɛtʃɪŋ/</span>The act of extending your body or limbs to make them more flexible or to warm up.</span>
+        </div>
+        <div class="word-item" data-word="prepare" data-ipa="/prɪˈpɛr/" data-definition="To get ready or make something ready for use.">
+            prepare
+            <span class="tooltiptext"><span class="ipa">/prɪˈpɛr/</span>To get ready or make something ready for use.</span>
+        </div>
+        <div class="word-item" data-word="cafeteria" data-ipa="/ˌkæfəˈtɪriə/" data-definition="A place where people get food at a counter and carry it to a table.">
+            cafeteria
+            <span class="tooltiptext"><span class="ipa">/ˌkæfəˈtɪriə/</span>A place where people get food at a counter and carry it to a table.</span>
+        </div>
+        <div class="word-item" data-word="impressive" data-ipa="/ɪmˈprɛsɪv/" data-definition="Something that makes you feel admiration or respect.">
+            impressive
+            <span class="tooltiptext"><span class="ipa">/ɪmˈprɛsɪv/</span>Something that makes you feel admiration or respect.</span>
+        </div>
+        <div class="word-item" data-word="convenient" data-ipa="/kənˈviːniənt/" data-definition="Easy to use or helpful for a particular purpose.">
+            convenient
+            <span class="tooltiptext"><span class="ipa">/kənˈviːniənt/</span>Easy to use or helpful for a particular purpose.</span>
+        </div>
+        <div class="word-item" data-word="coworkers" data-ipa="/ˈkoʊwɜrkərz/" data-definition="People you work with in a job.">
+            coworkers
+            <span class="tooltiptext"><span class="ipa">/ˈkoʊwɜrkərz/</span>People you work with in a job.</span>
+        </div>
+        <div class="word-item" data-word="healthy" data-ipa="/ˈhɛlθi/" data-definition="Good for your body or mind; not sick.">
+            healthy
+            <span class="tooltiptext"><span class="ipa">/ˈhɛlθi/</span>Good for your body or mind; not sick.</span>
+        </div>
+        <div class="word-item" data-word="light" data-ipa="/laɪt/" data-definition="Not heavy or not containing much food or calories.">
+            light
+            <span class="tooltiptext"><span class="ipa">/laɪt/</span>Not heavy or not containing much food or calories.</span>
+        </div>
+        <div class="word-item" data-word="jogging" data-ipa="/ˈdʒɑːɡɪŋ/" data-definition="Running slowly for exercise.">
+            jogging
+            <span class="tooltiptext"><span class="ipa">/ˈdʒɑːɡɪŋ/</span>Running slowly for exercise.</span>
+        </div>
+        <div class="word-item" data-word="regularly" data-ipa="/ˈrɛɡjələrli/" data-definition="Happening often or at the same time each day or week.">
+            regularly
+            <span class="tooltiptext"><span class="ipa">/ˈrɛɡjələrli/</span>Happening often or at the same time each day or week.</span>
+        </div>
+    </div>
+</div>
+
+    <!-- Practice Section -->
+    <div class="practice-words">
+        <h2>Practice These Words</h2>
+        <ul class="practice-list" id="practice-words-list">
+            <!-- Auto-populated from difficult words -->
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Process difficult words and paragraph
+            const paragraph = document.getElementById('lesson-paragraph');
+            const wordItems = document.querySelectorAll('.word-item');
+            const practiceList = document.getElementById('practice-words-list');
+            const originalParagraphContent = paragraph.innerHTML;
+            
+            // Clear existing practice list items
+            practiceList.innerHTML = '';
+            
+            // Process each difficult word
+            wordItems.forEach(item => {
+                const word = item.dataset.word;
+                const ipa = item.dataset.ipa;
+                const definition = item.dataset.definition;
+                
+                // Add word to practice list
+                const li = document.createElement('li');
+                li.textContent = word;
+                practiceList.appendChild(li);
+                
+                // Create regex pattern that matches the word but not inside HTML tags
+                const regex = new RegExp(`(?<!\\w)(${word})(?!\\w)(?![^<]*>|[^<>]*<\/)`, 'gi');
+                
+                // Replace all instances in the paragraph
+                paragraph.innerHTML = paragraph.innerHTML.replace(regex, 
+                    `<span class="tooltip" data-word="${word.toLowerCase()}">$1<span class="tooltiptext"><span class="ipa">${ipa}</span>${definition}</span></span>`);
+            });
+            
+            // Make sure we don't process words inside HTML tags or already processed words
+            const tooltipWords = document.querySelectorAll('.tooltip');
+            tooltipWords.forEach(tooltip => {
+                tooltip.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
